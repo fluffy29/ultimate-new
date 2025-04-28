@@ -21,15 +21,19 @@ const SignUpPage = () => {
 
   // Field configurations
   const fieldConfig = [
-    { name: "firstName", label: "First Name", type: "text", id: "firstNameInput" },
+    {
+      name: "firstName",
+      label: "First Name",
+      type: "text",
+      id: "firstNameInput",
+    },
     { name: "lastName", label: "Last Name", type: "text", id: "lastNameInput" },
     { name: "email", label: "Email", type: "email", id: "emailInput" },
     { name: "password", label: "Password", type: "password", id: "pwdInput" },
     { name: "role", label: "Role", type: "text", id: "roleInput" },
-    { name: "imageUrl", label: "Avatar", type: "text", id: "imageInput" }, // If you want file upload, it needs special handling
+    { name: "imageUrl", label: "Avatar", type: "text", id: "imageInput" },
   ];
 
-  // Form submit handler
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -73,8 +77,8 @@ const SignUpPage = () => {
             id={id}
             type={type}
             value={formData[name]}
-            onchange={handleChange(name)}
-            ariaDescribe={`${id}Help`}
+            onChange={handleChange(name)}
+            ariaDescribedby={`${id}Help`}
           />
         </div>
       ))}

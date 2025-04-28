@@ -1,15 +1,14 @@
-const InputForm = ({ type, id, ariaDescribe, value, onchange }) => {
-    return (
-        <input
-            type={type}
-            className="form-control"
-            id={id}
-            aria-describedby={ariaDescribe}
-            value={value}
-            onChange={(e) => onchange(e.target.value)}
-            required
-        />
-    )
-}
+const InputForm = ({ id, type, value, onChange, ariaDescribedby }) => {
+  return (
+    <input
+      id={id}
+      type={type}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      aria-describedby={ariaDescribedby}
+      className="form-control"
+    />
+  );
+};
 
-export default InputForm
+export default InputForm;

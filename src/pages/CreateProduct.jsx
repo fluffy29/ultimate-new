@@ -41,7 +41,7 @@ const CreateProduct = () => {
       if (!token) throw new Error("No authentication token found");
 
       const response = await fetch(
-        "http://localhost:3001/api/product/addProduct",
+        "http://localhost:3000/api/product/addProduct",
         {
           method: "POST",
           headers: {

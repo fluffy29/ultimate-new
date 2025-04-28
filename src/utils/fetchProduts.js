@@ -1,4 +1,4 @@
-const uri = "http://localhost:3001/api/product/getAllProduct"
+const uri = "http://localhost:3000/api/product/getAllProduct"
 
 export const fetchProducts = async () => {
     try {

@@ -53,7 +53,7 @@ const EditProductPage = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`http://localhost:3001/api/product/${id}`, {
+      const response = await fetch(`http://localhost:3000/api/product/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

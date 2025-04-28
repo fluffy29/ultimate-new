@@ -10,23 +10,20 @@ const LogInPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleEmailChange = (changedValue) => {
-    setEmail(changedValue);
-  };
-
-  const handlePasswordChange = (changedPassword) => {
-    setPassword(changedPassword);
-  };
+  const handleEmailChange = (value) => setEmail(value);
+  const handlePasswordChange = (value) => setPassword(value);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
+      setError("");
+      setLoading(true);
+
       if (!checkEmail.checkEmpty(email)) throw Error("Email is empty");
       if (!checkEmail.checkFormat(email)) throw Error("Wrong email format");
-
-      setError(null);
 
       const response = await fetch("http://localhost:3001/api/users/login", {
         method: "POST",
@@ -41,55 +38,83 @@ const LogInPage = () => {
         throw Error("Invalid credentials, please check");
       }
 
-      const token = await response.json();
-      localStorage.setItem("token", token);
+      const data = await response.json();
+      if (!data.token) {
+        throw Error("Invalid response from server");
+      }
+
+      localStorage.setItem("token", data.token);
 
       console.log("Login successful");
 
-      navigate("/"); 
+      navigate("/");
     } catch (error) {
       console.error(error.message);
       setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <form
-      className="card shadow-sm p-4 w-100"
-      style={{ maxWidth: "480px", margin: "auto" }}
+      className="card shadow-lg border-0 rounded-4 p-5 w-100"
+      style={{
+        maxWidth: "480px",
+        margin: "2rem auto",
+        backgroundColor: "#f8f9fa",
+      }}
       onSubmit={handleSubmit}
     >
-      <h1 className="text-center">Log In</h1>
+      <h1
+        className="text-center mb-4 fw-bold text-primary"
+        style={{ letterSpacing: "1px" }}
+      >
+        Log In
+      </h1>
 
-      <div className="mb-3">
+      <div className="mb-4">
         <LabelComp htmlFor="emailInput" displayText="Email" />
         <InputForm
-          onchange={handleEmailChange}
+          onChange={handleEmailChange}
           value={email}
           type="email"
           id="emailInput"
-          ariaDescribe="emailHelp"
+          ariaDescribedby="emailHelp"
         />
       </div>
 
-      <div className="mb-3">
+      <div className="mb-4">
         <LabelComp htmlFor="passwordInput" displayText="Password" />
         <InputForm
-          onchange={handlePasswordChange}
+          onChange={handlePasswordChange}
           value={password}
           type="password"
           id="passwordInput"
-          ariaDescribe="passwordHelp"
+          ariaDescribedby="passwordHelp"
         />
       </div>
 
-      {error && <AlertComp alertType="alert-danger" text={error} />}
+      {error && (
+        <div className="mb-3">
+          <AlertComp alertType="alert-danger" text={error} />
+        </div>
+      )}
 
-      <div>
-        <button type="submit" className="btn btn-primary w-100">
-          Submit
-        </button>
-      </div>
+      <button
+        type="submit"
+        className="btn btn-primary w-100 py-2 fw-semibold rounded-pill"
+        style={{ fontSize: "1.1rem" }}
+        disabled={loading}
+      >
+        {loading ? (
+          <div className="spinner-border spinner-border-sm" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        ) : (
+          "Submit"
+        )}
+      </button>
     </form>
   );
 };

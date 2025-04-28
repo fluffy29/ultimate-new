@@ -13,11 +13,12 @@ const CreateProduct = () => {
     price: "",
   });
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      navigate("/login"); // Redirect if no token
+      navigate("/login"); // Redirect if not logged in
     }
   }, [navigate]);
 
@@ -35,7 +36,8 @@ const CreateProduct = () => {
     event.preventDefault();
 
     try {
-      setError(null);
+      setError("");
+      setSuccess("");
 
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No authentication token found");
@@ -65,7 +67,7 @@ const CreateProduct = () => {
       }
 
       console.log("Product created successfully:", serverData);
-      // Optionally clear form
+      setSuccess("Product created successfully!");
       setFormData({ brand: "", Model: "", stock: "", price: "" });
     } catch (error) {
       console.error(error.message);
@@ -75,14 +77,23 @@ const CreateProduct = () => {
 
   return (
     <form
-      className="card shadow-sm p-4 w-100"
-      style={{ maxWidth: "480px", margin: "auto" }}
+      className="card shadow-lg border-0 rounded-4 p-5 w-100"
+      style={{
+        maxWidth: "480px",
+        margin: "2rem auto",
+        backgroundColor: "#f8f9fa",
+      }}
       onSubmit={handleSubmit}
     >
-      <h1 className="text-center">Create Product</h1>
+      <h1
+        className="text-center mb-4 fw-bold text-primary"
+        style={{ letterSpacing: "1px" }}
+      >
+        Create Product
+      </h1>
 
       {fieldConfig.map(({ name, label, type, id }) => (
-        <div className="mb-3" key={name}>
+        <div className="mb-4" key={name}>
           <LabelComp htmlFor={id} displayText={label} />
           <InputForm
             id={id}
@@ -94,13 +105,24 @@ const CreateProduct = () => {
         </div>
       ))}
 
-      {error && <AlertComp alertType="alert-danger" text={error} />}
+      {error && (
+        <div className="mb-3">
+          <AlertComp alertType="alert-danger" text={error} />
+        </div>
+      )}
+      {success && (
+        <div className="mb-3">
+          <AlertComp alertType="alert-success" text={success} />
+        </div>
+      )}
 
-      <div>
-        <button type="submit" className="btn btn-primary w-100">
-          Add Product
-        </button>
-      </div>
+      <button
+        type="submit"
+        className="btn btn-primary w-100 py-2 fw-semibold rounded-pill"
+        style={{ fontSize: "1.1rem", transition: "background 0.3s" }}
+      >
+        Add Product
+      </button>
     </form>
   );
 };

@@ -8,22 +8,28 @@ const EditProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+
   const [formData, setFormData] = useState({
     brand: "",
     Model: "",
     stock: "",
-    price: ""
+    price: "",
   });
-  const [error, setError] = useState(null);
+
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/api/product/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `http://localhost:3001/api/product/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch product");
@@ -53,7 +59,10 @@ const EditProductPage = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`http://localhost:3000/api/product/${id}`, {
+      setError("");
+      setSuccess("");
+
+      const response = await fetch(`http://localhost:3001/api/product/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -66,7 +75,11 @@ const EditProductPage = () => {
         throw new Error("Failed to update product");
       }
 
-      navigate("/");
+      setSuccess("Product updated successfully!");
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1500); 
     } catch (err) {
       console.error(err.message);
       setError(err.message);
@@ -82,32 +95,53 @@ const EditProductPage = () => {
 
   return (
     <form
-      className="card shadow-sm p-4 w-100"
-      style={{ maxWidth: "480px", margin: "auto" }}
+      className="card shadow-lg border-0 rounded-4 p-5 w-100"
+      style={{
+        maxWidth: "480px",
+        margin: "2rem auto",
+        backgroundColor: "#f8f9fa",
+      }}
       onSubmit={handleSubmit}
     >
-      <h1 className="text-center">Edit Product</h1>
+      <h1
+        className="text-center mb-4 fw-bold text-primary"
+        style={{ letterSpacing: "1px" }}
+      >
+        Edit Product
+      </h1>
 
       {fieldConfig.map(({ name, label, type, id }) => (
-        <div className="mb-3" key={name}>
+        <div className="mb-4" key={name}>
           <LabelComp htmlFor={id} displayText={label} />
           <InputForm
             id={id}
             type={type}
             value={formData[name]}
-            onchange={handleChange(name)}
-            ariaDescribe={`${id}Help`}
+            onChange={handleChange(name)}
+            ariaDescribedby={`${id}Help`}
           />
         </div>
       ))}
 
-      {error && <AlertComp alertType="alert-danger" text={error} />}
+      {error && (
+        <div className="mb-3">
+          <AlertComp alertType="alert-danger" text={error} />
+        </div>
+      )}
 
-      <div>
-        <button type="submit" className="btn btn-primary w-100">
-          Save Changes
-        </button>
-      </div>
+      {success && (
+        <div className="mb-3">
+          <AlertComp alertType="alert-success" text={success} />
+        </div>
+      )}
+
+      <button
+        type="submit"
+        className="btn btn-primary w-100 py-2 fw-semibold rounded-pill"
+        style={{ fontSize: "1.1rem", transition: "background 0.3s" }}
+      >
+        Save Changes
+      </button>
     </form>
   );
 };
